@@ -1,0 +1,56 @@
+{
+    "Player1Agent": {
+        "checkpoints": [
+            {
+                "steps": 474917,
+                "file_path": "results/main/Player1Agent/Player1Agent-474917.onnx",
+                "reward": 736.825136881026,
+                "creation_time": 1712088159.345858,
+                "auxillary_file_paths": [
+                    "results/main/Player1Agent/Player1Agent-474917.pt"
+                ]
+            },
+            {
+                "steps": 499948,
+                "file_path": "results/main/Player1Agent/Player1Agent-499948.onnx",
+                "reward": 584.5996820117356,
+                "creation_time": 1712088972.2193184,
+                "auxillary_file_paths": [
+                    "results/main/Player1Agent/Player1Agent-499948.pt"
+                ]
+            },
+            {
+                "steps": 500004,
+                "file_path": "results/main/Player1Agent/Player1Agent-500004.onnx",
+                "reward": 582.7202857104214,
+                "creation_time": 1712088972.2939594,
+                "auxillary_file_paths": [
+                    "results/main/Player1Agent/Player1Agent-500004.pt"
+                ]
+            },
+            {
+                "steps": 500004,
+                "file_path": "results/main/Player1Agent/Player1Agent-500004.onnx",
+                "reward": null,
+                "creation_time": 1712089727.2886503,
+                "auxillary_file_paths": [
+                    "results/main/Player1Agent/Player1Agent-500004.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 500004,
+            "file_path": "results/main/Player1Agent.onnx",
+            "reward": null,
+            "creation_time": 1712089727.2886503,
+            "auxillary_file_paths": [
+                "results/main/Player1Agent/Player1Agent-500004.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.11.0+cu102"
+    }
+}

@@ -13,24 +13,28 @@ public class Player2Movement : MonoBehaviour
     private bool IsGround;
     public LayerMask LayerMask;
     public float JumpHeight = 3f;
-    public Vector3 StartPosition; // �_�l��m
-    public Transform Player1; // Player1��Transform�A�ݭn�bUnity�s�边���]�m
+    public Vector3 StartPosition; // °_©l¦ì¸m
+    public Transform Player1; // Player1ªºTransform¡A»Ý­n¦bUnity½s¿è¾¹¤¤³]¸m
+    public bool canMove = true;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        StartPosition = transform.localPosition; // �b�C���}�l�ɰO���_�l��m
+        StartPosition = transform.localPosition; // ¦b¹CÀ¸¶}©l®É°O¿ý°_©l¦ì¸m
         // Debug.Log($"Player2: {transform.position} \nPlayer1: {Player1.position}");
     }
 
     void Update()
     {
         AutoFollowPlayer1();
-        Debug.Log($"Player2: {transform.position} \nPlayer1: {Player1.position}");
+        // Debug.Log($"Player2: {transform.position} \nPlayer1: {Player1.position}");
 
+        if (Input.GetButtonDown("Jump1")){
+            canMove = !canMove;
+        }
         if (transform.position.y < 1f)
         {
-            ResetPosition2(); // �p�G���⪺ y �b�y�Фp�� 1�A���m��m
+            ResetPosition2(); // ¦pªG¨¤¦âªº y ¶b®y¼Ð¤p©ó 1¡A­«¸m¦ì¸m
         }
     }
 
@@ -45,14 +49,16 @@ public class Player2Movement : MonoBehaviour
         }
 
         Vector3 direction = (Player1.position - transform.position).normalized;
-        // �O�d������V�W�����ʡA����������V
+        // «O¯d¤ô¥­¤è¦V¤Wªº²¾°Ê¡A©¿²¤««ª½¤è¦V
         direction.y = 0;
 
-        // �T�w Player2 �O�_���Ӳ���
-        if (direction.magnitude > 0.1f) // �T�O�����������ʤ~�ਭ
+        // ½T©w Player2 ¬O§_À³¸Ó²¾°Ê
+        if (direction.magnitude > 0.1f) // ½T«O¦³¨¬°÷ªº²¾°Ê¤~Âà¨­
         {
-            controller.Move(direction * Speed * Time.deltaTime);
-            // �� Player2 ��������V Player1
+            if(canMove){
+                controller.Move(direction * Speed * Time.deltaTime);
+            }
+            // ¨Ï Player2 ªº¨­ÅéÂà¦V Player1
             transform.rotation = Quaternion.LookRotation(direction);
         }
 
