@@ -15,7 +15,6 @@ public class Player2Movement : MonoBehaviour
     public float JumpHeight = 3f;
     public Vector3 StartPosition; // °_©l¦ì¸m
     public Transform Player1; // Player1ªºTransform¡A»Ý­n¦bUnity½s¿è¾¹¤¤³]¸m
-    public bool canMove = true;
 
     void Start()
     {
@@ -26,12 +25,26 @@ public class Player2Movement : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R)){
+            Debug.Log("Key Down R");
+            Global.resetRound();
+        }
+        if (Input.GetKeyDown(KeyCode.Z)){
+            Debug.Log("Key Down Z");
+            Global.mode = 0;
+        }
+        if (Input.GetKeyDown(KeyCode.X)){
+            Debug.Log("Key Down X");
+            Global.mode = 1;
+        }
+
+        if (Input.GetButtonDown("Jump1")){
+            controller.enabled = !controller.enabled;
+        }
+
         AutoFollowPlayer1();
         // Debug.Log($"Player2: {transform.position} \nPlayer1: {Player1.position}");
 
-        if (Input.GetButtonDown("Jump1")){
-            canMove = !canMove;
-        }
         if (transform.position.y < 1f)
         {
             ResetPosition2(); // ¦pªG¨¤¦âªº y ¶b®y¼Ð¤p©ó 1¡A­«¸m¦ì¸m
@@ -55,9 +68,7 @@ public class Player2Movement : MonoBehaviour
         // ½T©w Player2 ¬O§_À³¸Ó²¾°Ê
         if (direction.magnitude > 0.1f) // ½T«O¦³¨¬°÷ªº²¾°Ê¤~Âà¨­
         {
-            if(canMove){
-                controller.Move(direction * Speed * Time.deltaTime);
-            }
+            controller.Move(direction * Speed * Time.deltaTime);
             // ¨Ï Player2 ªº¨­ÅéÂà¦V Player1
             transform.rotation = Quaternion.LookRotation(direction);
         }

@@ -22,29 +22,38 @@ public class Player1Agent : Agent
     private Vector3 startPosition;
     public float targetCollisionRange = 3.0f;
     public float player2CollisionRange = 2.5f;
-    public int round = 0;
-    public int round_win = 0;
     public bool activeRandomPlayerPosition = false;
-    public int winStreak = 0;
+
 
     public void resetRound(){
-        round = 0;
-        round_win = 0;
-        winStreak = 0;
+        Global.round = 0;
+        Global.round_win = 0;
+        Global.winStreak = 0;
     }
 
     public void printInfo(){
         double winningRate = 0.0f;
-        if(round != 0){
-            winningRate = Math.Round(((double)round_win / round) * 100, 2);
+        if(Global.round != 0){
+            winningRate = Math.Round(((double)Global.round_win / Global.round) * 100, 2);
         }
-        Debug.Log($"Current episode reward: {GetCumulativeReward()}\nRound: {round}  Win: {round_win}  Win rate: {winningRate}% Win streak: {winStreak}");
+        Debug.Log($"Current episode reward: {GetCumulativeReward()}\nRound: {Global.round}  Win: {Global.round_win}  Win rate: {winningRate}% Win streak: {Global.winStreak}");
     }
 
 
     public void update(){
-        if (Input.GetButtonDown("Fire3")){
+        Debug.Log($"{Global.round}");
+
+        if (Input.GetKeyDown(KeyCode.R)){
+            Debug.Log("Key Down R");
             resetRound();
+        }
+        if (Input.GetKeyDown(KeyCode.Z)){
+            Debug.Log("Key Down Z");
+            Global.mode = 0;
+        }
+        if (Input.GetKeyDown(KeyCode.X)){
+            Debug.Log("Key Down X");
+            Global.mode = 1;
         }
     }
 
@@ -156,38 +165,48 @@ public class Player1Agent : Agent
     {
         // 重置Player1的位置和状态
         // transform.localPosition = startPosition; // 假定你有一个初始位置变量
-        float range_x = 25f;
+        float range_x = 20f;
         float base_x = 0f;
         float range_z = 25f;
-        float base_z = -0f;
+        float base_z = 0f;
 
         playerVelocity = Vector3.zero;
         isGrounded = false;
         episodeTimer = maxEpisodeTime;
 
         // Set a random position for Player1
+        if(Global.mode == 1){
+            range_z = 20f;
+            base_z = -10f;
+        }
+
         transform.localPosition = new Vector3(UnityEngine.Random.Range(-range_x + base_x, range_x + base_x),2, UnityEngine.Random.Range(-range_z + base_z, range_z + base_z));
 
         // Set a random position for Player2
+        if(Global.mode == 1){
+            range_z = 10f;
+            base_z = 10f;
+        }
         player2.transform.localPosition = new Vector3(UnityEngine.Random.Range(-range_x + base_x, range_x + base_x),2, UnityEngine.Random.Range(-range_z + base_z, range_z + base_z));
-        base_z = 0f;
 
         // Set a random position for Target
-        base_z = 0f;
+        if(Global.mode == 1){
+            base_z = 20f;
+        }
         Target.transform.localPosition = new Vector3(UnityEngine.Random.Range(-range_x + base_x, range_x + base_x),2, UnityEngine.Random.Range(-range_z + base_z, range_z + base_z));      
     }
 
     private void EndAndResetEpisode(bool isWin = false, float multiplier = 1.0f)
     {
         if(isWin){
-            round_win++;
-            winStreak++;
+            Global.round_win++;
+            Global.winStreak++;
             AddReward(100.0f * multiplier);
         }else{
-            winStreak = 0;
+            Global.winStreak = 0;
             AddReward(-100.0f * multiplier);
         }
-        round++;
+        Global.round++;
         printInfo();
         EndEpisode();
         ResetEnvironment(); // 确保在调用EndEpisode后立即调用

@@ -173,7 +173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6197ee83483fd6f46a248166480bde0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 5
+  Speed: 14
   Gravity: -9.8
   GroundCheck: {fileID: 1139615590}
   PlayerID: 2
@@ -183,8 +183,7 @@ MonoBehaviour:
     m_Bits: 64
   JumpHeight: 3
   StartPosition: {x: 0, y: 0, z: 0}
-  Player1: {fileID: 1775970138}
-  canMove: 0
+  Player1: {fileID: 0}
 --- !u!95 &84392528
 Animator:
   serializedVersion: 5
@@ -2249,6 +2248,7 @@ GameObject:
   - component: {fileID: 1775970147}
   - component: {fileID: 1775970146}
   - component: {fileID: 1775970149}
+  - component: {fileID: 1775970150}
   m_Layer: 0
   m_Name: player1
   m_TagString: Untagged
@@ -2256,16 +2256,15 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1775970138
-Transform:
+--- !u!224 &1775970138
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1775970137}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.8, z: -21.8}
+  m_LocalPosition: {x: 0, y: 0, z: -26.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2273,6 +2272,11 @@ Transform:
   - {fileID: 1147757928}
   m_Father: {fileID: 1720899104}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -1.9, y: 1.8}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &1775970140
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2401,7 +2405,7 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
   Target: {fileID: 806438572}
-  Speed: 10
+  Speed: 16
   JumpHeight: 2
   GroundLayer:
     serializedVersion: 2
@@ -2410,8 +2414,13 @@ MonoBehaviour:
   GroundDistance: 0.2
   maxEpisodeTime: 100
   player2: {fileID: 84392525}
+  targetCollisionRange: 3
+  player2CollisionRange: 2.5
   round: 0
   round_win: 0
+  activeRandomPlayerPosition: 0
+  winStreak: 0
+  mode: 0
 --- !u!114 &1775970148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2458,6 +2467,27 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
+--- !u!114 &1775970150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1775970137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32d40088a6124c578ad6b428df586e2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_pivot: {x: 0, y: 0}
+  m_anchorPosition: 4
+  m_rect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  m_margins: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1866609228
 GameObject:
   m_ObjectHideFlags: 0
