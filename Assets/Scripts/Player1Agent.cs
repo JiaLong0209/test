@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
@@ -9,7 +9,7 @@ public class Player1Agent : Agent
     public Transform Target; // 目标位置，用于计算距离等
     private CharacterController controller;
     public float Speed = 1f; // 移动速度
-    public float JumpHeight = 1f; // 跳跃高度
+    public float JumpHeight = 3f; // 跳跃高度
     private Vector3 playerVelocity; // 玩家速度
     private bool isGrounded; // 是否在地面上
     public LayerMask GroundLayer; // 地面层，用于检测是否接触地面
@@ -20,16 +20,32 @@ public class Player1Agent : Agent
     private float episodeTimer;
     public GameObject player2; // 需要在编辑器中设置
     private Vector3 startPosition;
+    public float targetCollisionRange = 3.0f;
+    public float player2CollisionRange = 2.5f;
     public int round = 0;
     public int round_win = 0;
+    public bool activeRandomPlayerPosition = false;
+    public int winStreak = 0;
+
+    public void resetRound(){
+        round = 0;
+        round_win = 0;
+        winStreak = 0;
+    }
 
     public void printInfo(){
         double winningRate = 0.0f;
         if(round != 0){
             winningRate = Math.Round(((double)round_win / round) * 100, 2);
         }
-        Debug.Log($"Current episode reward: {GetCumulativeReward()}\nRound: {round}  Win: {round_win}  Winning Rate: {winningRate}%");
-        // Debug.Log($"--------------------Reset-----------------------\nRound: {round}  Win: {round_win}  Winning Rate: {winningRate}%");
+        Debug.Log($"Current episode reward: {GetCumulativeReward()}\nRound: {round}  Win: {round_win}  Win rate: {winningRate}% Win streak: {winStreak}");
+    }
+
+
+    public void update(){
+        if (Input.GetButtonDown("Fire3")){
+            resetRound();
+        }
     }
 
     public override void Initialize()
@@ -43,15 +59,12 @@ public class Player1Agent : Agent
     {
         // 重置Agent的位置到初始位置、速度和计时器
         transform.localPosition = startPosition;
+
+
         // Debug.Log($" Message Player1: \n1.position: {transform.position}\nstart_position: {startPosition}\n2.position: {player2.transform.position}!!!");
         playerVelocity = Vector3.zero;
         episodeTimer = maxEpisodeTime; // 重置计时器
         lastDistanceToTarget = float.MaxValue;
-    }
-
-    public void Update()
-    {
-
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -87,25 +100,25 @@ public class Player1Agent : Agent
         playerVelocity.y += Physics.gravity.y * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
 
-        // 奖励
+        // Target reward
         float distanceToTarget = Vector3.Distance(this.transform.position, Target.position);
-        if (distanceToTarget < 3.0f) // 如果Agent接近目标
+        if (distanceToTarget < targetCollisionRange) // 如果Agent collide 目标
         {
             Debug.Log("Player1 reach target!");
-            EndAndResetEpisode(true); // 结束这个回合
+            EndAndResetEpisode(true, 50); // 结束这个回合
+        }else
+        {
+            // Debug.Log($"Distance to Target: {distanceToTarget}");
+            AddReward(((-distanceToTarget+targetCollisionRange) * 0.50f)-5.0f);
+            // AddReward(-5.00f); // 每步给予小的负奖励，鼓励Agent快速到达目标
         }
-        // else
-        // {
-        //     Debug.Log($"Distance to Target: {distanceToTarget}");
-        //     AddReward(-0.01f); // 每步给予小的负奖励，鼓励Agent快速到达目标
-        // }
 
         // // 计算与目标的距离
         if (distanceToTarget < lastDistanceToTarget)
         {
-            AddReward(50.0f * (1/distanceToTarget)); // 如果Agent靠近目标，给予小量正奖励;
+            AddReward(150.0f * (1/distanceToTarget)); // 如果Agent靠近目标，给予小量正奖励;
         }else{
-            AddReward((-distanceToTarget+3.0f) * 0.15f);
+            AddReward(((-distanceToTarget+targetCollisionRange) * 0.50f)-5.0f);
         }
 
         lastDistanceToTarget = distanceToTarget;
@@ -113,32 +126,30 @@ public class Player1Agent : Agent
 
         if (this.transform.localPosition.y < 1)
         {
-            EndAndResetEpisode();
+            EndAndResetEpisode(false,15);
         }
 
         // 更新计时器
         episodeTimer -= Time.deltaTime;
         if (episodeTimer <= 0)
         {
-            EndAndResetEpisode();
+            EndAndResetEpisode(false,20);
         }else{
-            AddReward(-Time.deltaTime * 100f);
+            AddReward(-Time.deltaTime * 800f); // -800 rewards per second
         }
 
         // 检查与Player2的碰撞
         float distanceToPlayer2 = Vector3.Distance(this.transform.localPosition, player2.transform.localPosition);
-        float player2CollideSize = 2.5f;
-        if (distanceToPlayer2 < player2CollideSize) // 假定距离阈值为2.5
+        if (distanceToPlayer2 <= player2CollisionRange) // 假定距离阈值为2.5
         {
-            EndAndResetEpisode();
+            EndAndResetEpisode(false, 3);
         }
-        else if(distanceToPlayer2 >= player2CollideSize && distanceToPlayer2 < 15.0f){
-            AddReward(-20.0f * (1/distanceToPlayer2));
+        else if(distanceToPlayer2 >= player2CollisionRange && distanceToPlayer2 < 10.0f){  // Distance 2.5 ~ 10.0
+            AddReward(-200.0f * (1/(distanceToPlayer2-player2CollisionRange/1.5f)));
         }
 
-        // Debug.Log($"Player1 position: {transform.position} \nTarget position: {Target.position}\nDist: {distanceToTarget}");
 
-        printInfo();
+        // printInfo();
     }
 
     private void ResetEnvironment()
@@ -149,27 +160,32 @@ public class Player1Agent : Agent
         float base_x = 0f;
         float range_z = 25f;
         float base_z = -0f;
-        transform.localPosition = new Vector3(UnityEngine.Random.Range(-range_x + base_x, range_x + base_x),2, UnityEngine.Random.Range(-range_z + base_z, range_z + base_z));
+
         playerVelocity = Vector3.zero;
         isGrounded = false;
         episodeTimer = maxEpisodeTime;
 
-        // 重置Player2的位置和状态
-        base_z = 0f;
-        player2.transform.localPosition = new Vector3(UnityEngine.Random.Range(-range_x + base_x, range_x + base_x),2, UnityEngine.Random.Range(-range_z + base_z, range_z + base_z));
+        // Set a random position for Player1
+        transform.localPosition = new Vector3(UnityEngine.Random.Range(-range_x + base_x, range_x + base_x),2, UnityEngine.Random.Range(-range_z + base_z, range_z + base_z));
 
-        // Change the position of target        
+        // Set a random position for Player2
+        player2.transform.localPosition = new Vector3(UnityEngine.Random.Range(-range_x + base_x, range_x + base_x),2, UnityEngine.Random.Range(-range_z + base_z, range_z + base_z));
+        base_z = 0f;
+
+        // Set a random position for Target
         base_z = 0f;
         Target.transform.localPosition = new Vector3(UnityEngine.Random.Range(-range_x + base_x, range_x + base_x),2, UnityEngine.Random.Range(-range_z + base_z, range_z + base_z));      
     }
 
-    private void EndAndResetEpisode(bool isWin = false)
+    private void EndAndResetEpisode(bool isWin = false, float multiplier = 1.0f)
     {
         if(isWin){
             round_win++;
-            AddReward(300.0f);
+            winStreak++;
+            AddReward(100.0f * multiplier);
         }else{
-            AddReward(-300.0f);
+            winStreak = 0;
+            AddReward(-100.0f * multiplier);
         }
         round++;
         printInfo();

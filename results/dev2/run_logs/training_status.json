@@ -1,0 +1,65 @@
+{
+    "Player1Agent": {
+        "checkpoints": [
+            {
+                "steps": 38847,
+                "file_path": "results/dev2/Player1Agent/Player1Agent-38847.onnx",
+                "reward": -6032.256254044047,
+                "creation_time": 1712125898.7272072,
+                "auxillary_file_paths": [
+                    "results/dev2/Player1Agent/Player1Agent-38847.pt"
+                ]
+            },
+            {
+                "steps": 49996,
+                "file_path": "results/dev2/Player1Agent/Player1Agent-49996.onnx",
+                "reward": -8134.934638671875,
+                "creation_time": 1712126097.3862302,
+                "auxillary_file_paths": [
+                    "results/dev2/Player1Agent/Player1Agent-49996.pt"
+                ]
+            },
+            {
+                "steps": 99981,
+                "file_path": "results/dev2/Player1Agent/Player1Agent-99981.onnx",
+                "reward": -7987.753032083477,
+                "creation_time": 1712126503.8453178,
+                "auxillary_file_paths": [
+                    "results/dev2/Player1Agent/Player1Agent-99981.pt"
+                ]
+            },
+            {
+                "steps": 149994,
+                "file_path": "results/dev2/Player1Agent/Player1Agent-149994.onnx",
+                "reward": -6684.3757836955165,
+                "creation_time": 1712126915.845053,
+                "auxillary_file_paths": [
+                    "results/dev2/Player1Agent/Player1Agent-149994.pt"
+                ]
+            },
+            {
+                "steps": 170114,
+                "file_path": "results/dev2/Player1Agent/Player1Agent-170114.onnx",
+                "reward": -6418.412291459814,
+                "creation_time": 1712127079.0578425,
+                "auxillary_file_paths": [
+                    "results/dev2/Player1Agent/Player1Agent-170114.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 170114,
+            "file_path": "results/dev2/Player1Agent.onnx",
+            "reward": -6418.412291459814,
+            "creation_time": 1712127079.0578425,
+            "auxillary_file_paths": [
+                "results/dev2/Player1Agent/Player1Agent-170114.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.11.0+cu102"
+    }
+}
