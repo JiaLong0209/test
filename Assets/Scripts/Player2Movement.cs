@@ -23,8 +23,8 @@ public class Player2Movement : MonoBehaviour
         // Debug.Log($"Player2: {transform.position} \nPlayer1: {Player1.position}");
     }
 
-    void Update()
-    {
+    void Update(){
+ 
         if (Input.GetKeyDown(KeyCode.R)){
             Debug.Log("Key Down R");
             Global.resetRound();

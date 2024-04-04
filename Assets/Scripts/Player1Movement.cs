@@ -29,6 +29,7 @@ public class Player1Movement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("Start from player1");
         controller = transform.GetComponent<CharacterController>();
         StartPosition = transform.position; // 在遊戲開始時記錄起始位置
         GameOver.SetActive(false);
@@ -40,44 +41,49 @@ public class Player1Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        MoveBasedOnInput();
+       if (Input.GetKeyDown(KeyCode.R)){
+           Debug.Log("Key Down R");
+           Global.resetRound();
+       }
+       if (Input.GetKeyDown(KeyCode.Z)){
+           Debug.Log("Key Down Z");
+           Global.mode = 0;
+       }
+       if (Input.GetKeyDown(KeyCode.X)){
+           Debug.Log("Key Down X");
+           Global.mode = 1;
+       }
+
+       if (Input.GetButtonDown("Jump1")){
+           controller.enabled = !controller.enabled;
+       }
+ 
+        // MoveBasedOnInput();
         
-        if (transform.position.z > 24.3f)
-        {
-            StartCoroutine(ShowGameWin());
-            ResetPosition();
-        }
+        // if (transform.position.z > 24.3f)
+        // {
+        //     StartCoroutine(ShowGameWin());
+        //     ResetPosition();
+        // }
 
-        if (transform.position.y < 1f)
-        {
-            StartCoroutine(ShowGameOver());
-            ResetPosition();
-        }
+        // if (transform.position.y < 1f)
+        // {
+        //     StartCoroutine(ShowGameOver());
+        //     ResetPosition();
+        // }
 
-        CheckForPlayer2Collision();
+        // CheckForPlayer2Collision();
 
-        if (timeRemaining > 0)
-        {
-            timeRemaining -= Time.deltaTime;
-            UpdateTimerDisplay();
-            if (timeRemaining <= 0)
-            {
-                StartCoroutine(ShowGameOver());
-                ResetPosition();
-            }
-        }
-    }
-
-    private void CheckForPlayer2Collision()
-    {
-        float distanceToPlayer2 = Vector3.Distance(transform.position, Player2.transform.position);
-        float collisionThreshold = 1.52f; // 這是"碰撞"被判斷發生的最大距離，根據你的需要進行調整
-
-        if (distanceToPlayer2 < collisionThreshold)
-        {
-            StartCoroutine(ShowGameOver());
-            ResetPosition();
-        }
+        // if (timeRemaining > 0)
+        // {
+        //     timeRemaining -= Time.deltaTime;
+        //     UpdateTimerDisplay();
+        //     if (timeRemaining <= 0)
+        //     {
+        //         StartCoroutine(ShowGameOver());
+        //         ResetPosition();
+        //     }
+        // }
     }
 
     private void MoveBasedOnInput()
@@ -101,6 +107,18 @@ public class Player1Movement : MonoBehaviour
         if (Input.GetButtonDown("Jump" + playerid) && IsGround)
         {
             Velocity.y += Mathf.Sqrt(JumpHeight * -2f * Gravity);
+        }
+    }
+
+    private void CheckForPlayer2Collision()
+    {
+        float distanceToPlayer2 = Vector3.Distance(transform.position, Player2.transform.position);
+        float collisionThreshold = 1.52f; // 這是"碰撞"被判斷發生的最大距離，根據你的需要進行調整
+
+        if (distanceToPlayer2 < collisionThreshold)
+        {
+            StartCoroutine(ShowGameOver());
+            ResetPosition();
         }
     }
 

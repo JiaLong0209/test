@@ -14,11 +14,7 @@ public static class Global {
         Global.winStreak = 0;
     }
 
-}
-
-public class GlobalClass : MonoBehaviour{
-
-    public void update(){
+    public static void update(){
         if (Input.GetKeyDown(KeyCode.R)){
             Debug.Log("Key Down R");
             Global.resetRound();
@@ -32,5 +28,9 @@ public class GlobalClass : MonoBehaviour{
             Global.mode = 1;
         }
     }
+}
+
+public class GlobalClass : MonoBehaviour{
+
 
 }

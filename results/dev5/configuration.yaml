@@ -4,8 +4,8 @@ behaviors:
     trainer_type: ppo
     hyperparameters:
       batch_size: 512
-      buffer_size: 4096
-      learning_rate: 0.001
+      buffer_size: 8192
+      learning_rate: 0.0007
       beta: 0.005
       epsilon: 0.15
       lambd: 0.95
@@ -37,8 +37,8 @@ behaviors:
     init_path: null
     keep_checkpoints: 5
     checkpoint_interval: 50000
-    max_steps: 5000000
-    time_horizon: 256
+    max_steps: 10000000
+    time_horizon: 2048
     summary_freq: 5000
     threaded: true
     self_play: null

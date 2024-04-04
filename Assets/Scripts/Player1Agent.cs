@@ -24,7 +24,6 @@ public class Player1Agent : Agent
     public float player2CollisionRange = 2.5f;
     public bool activeRandomPlayerPosition = false;
 
-
     public void resetRound(){
         Global.round = 0;
         Global.round_win = 0;
@@ -39,23 +38,6 @@ public class Player1Agent : Agent
         Debug.Log($"Current episode reward: {GetCumulativeReward()}\nRound: {Global.round}  Win: {Global.round_win}  Win rate: {winningRate}% Win streak: {Global.winStreak}");
     }
 
-
-    public void update(){
-        Debug.Log($"{Global.round}");
-
-        if (Input.GetKeyDown(KeyCode.R)){
-            Debug.Log("Key Down R");
-            resetRound();
-        }
-        if (Input.GetKeyDown(KeyCode.Z)){
-            Debug.Log("Key Down Z");
-            Global.mode = 0;
-        }
-        if (Input.GetKeyDown(KeyCode.X)){
-            Debug.Log("Key Down X");
-            Global.mode = 1;
-        }
-    }
 
     public override void Initialize()
     {
@@ -119,7 +101,6 @@ public class Player1Agent : Agent
         {
             // Debug.Log($"Distance to Target: {distanceToTarget}");
             AddReward(((-distanceToTarget+targetCollisionRange) * 0.50f)-5.0f);
-            // AddReward(-5.00f); // 每步给予小的负奖励，鼓励Agent快速到达目标
         }
 
         // // 计算与目标的距离
@@ -135,14 +116,14 @@ public class Player1Agent : Agent
 
         if (this.transform.localPosition.y < 1)
         {
-            EndAndResetEpisode(false,15);
+            EndAndResetEpisode(false,20);
         }
 
         // 更新计时器
         episodeTimer -= Time.deltaTime;
         if (episodeTimer <= 0)
         {
-            EndAndResetEpisode(false,20);
+            EndAndResetEpisode(false,100);
         }else{
             AddReward(-Time.deltaTime * 800f); // -800 rewards per second
         }
@@ -151,7 +132,7 @@ public class Player1Agent : Agent
         float distanceToPlayer2 = Vector3.Distance(this.transform.localPosition, player2.transform.localPosition);
         if (distanceToPlayer2 <= player2CollisionRange) // 假定距离阈值为2.5
         {
-            EndAndResetEpisode(false, 3);
+            EndAndResetEpisode(false, 30);
         }
         else if(distanceToPlayer2 >= player2CollisionRange && distanceToPlayer2 < 10.0f){  // Distance 2.5 ~ 10.0
             AddReward(-200.0f * (1/(distanceToPlayer2-player2CollisionRange/1.5f)));
