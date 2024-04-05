@@ -1,0 +1,51 @@
+{
+    "Player2Agent": {
+        "checkpoints": [
+            {
+                "steps": 1503,
+                "file_path": "results/p12_dev/Player2Agent/Player2Agent-1503.onnx",
+                "reward": -16398.38131148727,
+                "creation_time": 1712294711.1091566,
+                "auxillary_file_paths": [
+                    "results/p12_dev/Player2Agent/Player2Agent-1503.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1503,
+            "file_path": "results/p12_dev/Player2Agent.onnx",
+            "reward": -16398.38131148727,
+            "creation_time": 1712294711.1091566,
+            "auxillary_file_paths": [
+                "results/p12_dev/Player2Agent/Player2Agent-1503.pt"
+            ]
+        }
+    },
+    "Player1Agent": {
+        "checkpoints": [
+            {
+                "steps": 1505,
+                "file_path": "results/p12_dev/Player1Agent/Player1Agent-1505.onnx",
+                "reward": -19626.75131064967,
+                "creation_time": 1712294711.1444464,
+                "auxillary_file_paths": [
+                    "results/p12_dev/Player1Agent/Player1Agent-1505.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1505,
+            "file_path": "results/p12_dev/Player1Agent.onnx",
+            "reward": -19626.75131064967,
+            "creation_time": 1712294711.1444464,
+            "auxillary_file_paths": [
+                "results/p12_dev/Player1Agent/Player1Agent-1505.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.11.0+cu102"
+    }
+}

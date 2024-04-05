@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class Player2Movement : MonoBehaviour
 {
-    private CharacterController controller;
+    public CharacterController controller;
     public float Speed = 0.03f;
     public float Gravity = -9.8f;
     private Vector3 Velocity = Vector3.zero;
     public Transform GroundCheck;
     public int PlayerID = 2;
     public float CheckRadius = 0.2f;
-    private bool IsGround;
+    public bool IsGround;
     public LayerMask LayerMask;
     public float JumpHeight = 3f;
     public Vector3 StartPosition; // °_©l¦ì¸m
@@ -24,23 +24,6 @@ public class Player2Movement : MonoBehaviour
     }
 
     void Update(){
- 
-        if (Input.GetKeyDown(KeyCode.R)){
-            Debug.Log("Key Down R");
-            Global.resetRound();
-        }
-        if (Input.GetKeyDown(KeyCode.Z)){
-            Debug.Log("Key Down Z");
-            Global.mode = 0;
-        }
-        if (Input.GetKeyDown(KeyCode.X)){
-            Debug.Log("Key Down X");
-            Global.mode = 1;
-        }
-
-        if (Input.GetButtonDown("Jump1")){
-            controller.enabled = !controller.enabled;
-        }
 
         AutoFollowPlayer1();
         // Debug.Log($"Player2: {transform.position} \nPlayer1: {Player1.position}");

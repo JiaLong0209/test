@@ -6,36 +6,32 @@ using UnityEngine;
 
 public class Player1Agent : Agent
 {
+    public int PlayerId = 0;
+    public Environment Env;
     public Transform Target; // 目标位置，用于计算距离等
     private CharacterController controller;
-    public float Speed = 1f; // 移动速度
+    public float Speed = 15f; // 移动速度
     public float JumpHeight = 3f; // 跳跃高度
-    private Vector3 playerVelocity; // 玩家速度
-    private bool isGrounded; // 是否在地面上
+    private Vector3 PlayerVelocity; // 玩家速度
+    private bool IsGrounded; // 是否在地面上
     public LayerMask GroundLayer; // 地面层，用于检测是否接触地面
     public Transform GroundCheck; // 用于检测是否在地面的Transform
     public float GroundDistance = 0.2f; // 与地面的检测距离
-    private float lastDistanceToTarget = float.MaxValue;
-    public float maxEpisodeTime = 30f; // 设定最大时间（秒）
-    private float episodeTimer;
-    public GameObject player2; // 需要在编辑器中设置
+    private float LastDistanceToTarget = float.MaxValue;
+    public float MaxEpisodeTime = 30f; // 设定最大时间（秒）
+    private float EpisodeTimer;
+    public GameObject Player2; // 需要在编辑器中设置
     private Vector3 startPosition;
-    public float targetCollisionRange = 3.0f;
-    public float player2CollisionRange = 2.5f;
+    public float TargetCollisionRange = 3.0f;
+    public float Player2CollisionRange = 2.5f;
     public bool activeRandomPlayerPosition = false;
 
-    public void resetRound(){
-        Global.round = 0;
-        Global.round_win = 0;
-        Global.winStreak = 0;
-    }
-
-    public void printInfo(){
+    public void PrintInfo(){
         double winningRate = 0.0f;
-        if(Global.round != 0){
-            winningRate = Math.Round(((double)Global.round_win / Global.round) * 100, 2);
+        if(Global.Round != 0){
+            winningRate = Math.Round(((double)Global.PlayersRoundWin[PlayerId] / Global.Round) * 100, 2);
         }
-        Debug.Log($"Current episode reward: {GetCumulativeReward()}\nRound: {Global.round}  Win: {Global.round_win}  Win rate: {winningRate}% Win streak: {Global.winStreak}");
+        Debug.Log($"Current episode reward: {GetCumulativeReward()}\nRound: {Global.Round}  Win: {Global.PlayersRoundWin[PlayerId]}  Win rate: {winningRate}% Win streak: {Global.PlayersWinStreak[PlayerId]}");
     }
 
 
@@ -43,7 +39,7 @@ public class Player1Agent : Agent
     {
         controller = GetComponent<CharacterController>();
         startPosition = transform.localPosition; // 将当前局部位置作为初始位置
-        episodeTimer = maxEpisodeTime; // 初始化计时器
+        EpisodeTimer = MaxEpisodeTime; // 初始化计时器
     }
 
     public override void OnEpisodeBegin()
@@ -52,10 +48,10 @@ public class Player1Agent : Agent
         transform.localPosition = startPosition;
 
 
-        // Debug.Log($" Message Player1: \n1.position: {transform.position}\nstart_position: {startPosition}\n2.position: {player2.transform.position}!!!");
-        playerVelocity = Vector3.zero;
-        episodeTimer = maxEpisodeTime; // 重置计时器
-        lastDistanceToTarget = float.MaxValue;
+        // Debug.Log($" Message Player1: \n1.position: {transform.position}\nstart_position: {startPosition}\n2.position: {Player2.transform.position}!!!");
+        PlayerVelocity = Vector3.zero;
+        EpisodeTimer = MaxEpisodeTime; // 重置计时器
+        LastDistanceToTarget = float.MaxValue;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -64,8 +60,11 @@ public class Player1Agent : Agent
         // 例如：Agent与目标的距离和方向
         sensor.AddObservation(Target.localPosition);
         sensor.AddObservation(this.transform.localPosition);
-        sensor.AddObservation(player2.transform.localPosition);
-        sensor.AddObservation(playerVelocity);
+        sensor.AddObservation(Player2.transform.localPosition);
+        sensor.AddObservation(PlayerVelocity);
+        if(Global.IsActiveSpeedObservation){
+            sensor.AddObservation(Speed);
+        }
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -75,53 +74,60 @@ public class Player1Agent : Agent
         move.x = actions.ContinuousActions[0];
         move.z = actions.ContinuousActions[1];
 
-        isGrounded = Physics.CheckSphere(GroundCheck.position, GroundDistance, GroundLayer, QueryTriggerInteraction.Ignore);
-        if (isGrounded && playerVelocity.y < 0)
+        // foreach (var a in actions.ContinuousActions)
+        // {
+        //     Debug.Log($"{a}");
+        // }
+        // Debug.Log($"--------------------------------------");
+
+
+        IsGrounded = Physics.CheckSphere(GroundCheck.position, GroundDistance, GroundLayer, QueryTriggerInteraction.Ignore);
+        if (IsGrounded && PlayerVelocity.y < 0)
         {
-            playerVelocity.y = 0f;
+            PlayerVelocity.y = 0f;
         }
 
         controller.Move(move * Speed * Time.deltaTime);
 
-        if (actions.ContinuousActions[2] > 0.5f && isGrounded)
+        if (actions.ContinuousActions[2] > 0.5f && IsGrounded)
         {
-            playerVelocity.y += Mathf.Sqrt(JumpHeight * -3.0f * Physics.gravity.y);
+            PlayerVelocity.y += Mathf.Sqrt(JumpHeight * -3.0f * Physics.gravity.y);
         }
 
-        playerVelocity.y += Physics.gravity.y * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
+        PlayerVelocity.y += Physics.gravity.y * Time.deltaTime;
+        controller.Move(PlayerVelocity * Time.deltaTime);
 
         // Target reward
-        float distanceToTarget = Vector3.Distance(this.transform.position, Target.position);
-        if (distanceToTarget < targetCollisionRange) // 如果Agent collide 目标
+        float DistanceToTarget = Vector3.Distance(this.transform.position, Target.position);
+        if (DistanceToTarget < TargetCollisionRange) // 如果Agent collide 目标
         {
             Debug.Log("Player1 reach target!");
             EndAndResetEpisode(true, 50); // 结束这个回合
         }else
         {
-            // Debug.Log($"Distance to Target: {distanceToTarget}");
-            AddReward(((-distanceToTarget+targetCollisionRange) * 0.50f)-5.0f);
+            // Debug.Log($"Distance to Target: {DistanceToTarget}");
+            AddReward(((-DistanceToTarget+TargetCollisionRange) * 0.50f)-5.0f);
         }
 
         // // 计算与目标的距离
-        if (distanceToTarget < lastDistanceToTarget)
+        if (DistanceToTarget < LastDistanceToTarget)
         {
-            AddReward(150.0f * (1/distanceToTarget)); // 如果Agent靠近目标，给予小量正奖励;
+            AddReward(150.0f * (1/DistanceToTarget)); // 如果Agent靠近目标，给予小量正奖励;
         }else{
-            AddReward(((-distanceToTarget+targetCollisionRange) * 0.50f)-5.0f);
+            AddReward(((-DistanceToTarget+TargetCollisionRange) * 0.50f)-5.0f);
         }
 
-        lastDistanceToTarget = distanceToTarget;
+        LastDistanceToTarget = DistanceToTarget;
 
 
-        if (this.transform.localPosition.y < 1)
+        if (this.transform.localPosition.y < 0)
         {
             EndAndResetEpisode(false,20);
         }
 
         // 更新计时器
-        episodeTimer -= Time.deltaTime;
-        if (episodeTimer <= 0)
+        EpisodeTimer -= Time.deltaTime;
+        if (EpisodeTimer <= 0)
         {
             EndAndResetEpisode(false,100);
         }else{
@@ -129,66 +135,73 @@ public class Player1Agent : Agent
         }
 
         // 检查与Player2的碰撞
-        float distanceToPlayer2 = Vector3.Distance(this.transform.localPosition, player2.transform.localPosition);
-        if (distanceToPlayer2 <= player2CollisionRange) // 假定距离阈值为2.5
+        float distanceToPlayer2 = Vector3.Distance(this.transform.localPosition, Player2.transform.localPosition);
+        if (Env.IsPlayer2Win) // 假定距离阈值为2.5
         {
-            EndAndResetEpisode(false, 30);
+            Env.IsPlayer2Win = false;
+            Global.AddPlayerSpeed(PlayerId, Global.SpeedBonus);
+            Debug.Log($"Player1 Speed(+{Global.SpeedBonus}): {Global.GetPlayerSpeed(PlayerId)}");
+            EndAndResetEpisode(false, 40);
         }
-        else if(distanceToPlayer2 >= player2CollisionRange && distanceToPlayer2 < 10.0f){  // Distance 2.5 ~ 10.0
-            AddReward(-200.0f * (1/(distanceToPlayer2-player2CollisionRange/1.5f)));
+        else if(distanceToPlayer2 >= Player2CollisionRange && distanceToPlayer2 < 10.0f){  // Distance 2.5 ~ 10.0
+            AddReward(-200.0f * (1/(distanceToPlayer2-Player2CollisionRange/1.5f)));
         }
 
-
-        // printInfo();
+        // PrintInfo();
     }
 
     private void ResetEnvironment()
     {
         // 重置Player1的位置和状态
         // transform.localPosition = startPosition; // 假定你有一个初始位置变量
-        float range_x = 20f;
-        float base_x = 0f;
-        float range_z = 25f;
-        float base_z = 0f;
+        float rangeX = 20f;
+        float baseX = 0f;
+        float rangeZ = 25f;
+        float baseZ = 0f;
 
-        playerVelocity = Vector3.zero;
-        isGrounded = false;
-        episodeTimer = maxEpisodeTime;
+        PlayerVelocity = Vector3.zero;
+        IsGrounded = false;
+        EpisodeTimer = MaxEpisodeTime;
 
         // Set a random position for Player1
-        if(Global.mode == 1){
-            range_z = 20f;
-            base_z = -10f;
+        if(Global.Mode == 1){
+            rangeZ = 20f;
+            baseZ = -10f;
         }
 
-        transform.localPosition = new Vector3(UnityEngine.Random.Range(-range_x + base_x, range_x + base_x),2, UnityEngine.Random.Range(-range_z + base_z, range_z + base_z));
+        transform.localPosition = new Vector3(UnityEngine.Random.Range(-rangeX + baseX, rangeX + baseX),2, UnityEngine.Random.Range(-rangeZ + baseZ, rangeZ + baseZ));
 
         // Set a random position for Player2
-        if(Global.mode == 1){
-            range_z = 10f;
-            base_z = 10f;
+        if(Global.Mode == 1){
+            rangeZ = 10f;
+            baseZ = 10f;
         }
-        player2.transform.localPosition = new Vector3(UnityEngine.Random.Range(-range_x + base_x, range_x + base_x),2, UnityEngine.Random.Range(-range_z + base_z, range_z + base_z));
+        Player2.transform.localPosition = new Vector3(UnityEngine.Random.Range(-rangeX + baseX, rangeX + baseX),2, UnityEngine.Random.Range(-rangeZ + baseZ, rangeZ + baseZ));
 
         // Set a random position for Target
-        if(Global.mode == 1){
-            base_z = 20f;
+        if(Global.Mode == 1){
+            baseZ = 20f;
         }
-        Target.transform.localPosition = new Vector3(UnityEngine.Random.Range(-range_x + base_x, range_x + base_x),2, UnityEngine.Random.Range(-range_z + base_z, range_z + base_z));      
+        Target.transform.localPosition = new Vector3(UnityEngine.Random.Range(-rangeX + baseX, rangeX + baseX),2, UnityEngine.Random.Range(-rangeZ + baseZ, rangeZ + baseZ));      
     }
 
     private void EndAndResetEpisode(bool isWin = false, float multiplier = 1.0f)
     {
         if(isWin){
-            Global.round_win++;
-            Global.winStreak++;
+            Global.PlayersRoundWin[PlayerId]++;
+            Global.PlayersWinStreak[PlayerId]++;
+            Env.IsPlayer1Win = true;
+            Global.AddPlayerSpeed(PlayerId, -Global.SpeedBonus);
+            Debug.Log($"Player1 Speed(-{Global.SpeedBonus}): {Global.GetPlayerSpeed(PlayerId)}");
             AddReward(100.0f * multiplier);
         }else{
-            Global.winStreak = 0;
+            Global.PlayersWinStreak[PlayerId] = 0;
+            Env.IsPlayer1Win = false;
             AddReward(-100.0f * multiplier);
         }
-        Global.round++;
-        printInfo();
+        Global.Round++;
+        Speed = Global.GetPlayerSpeed(PlayerId);
+        PrintInfo();
         EndEpisode();
         ResetEnvironment(); // 确保在调用EndEpisode后立即调用
     }
