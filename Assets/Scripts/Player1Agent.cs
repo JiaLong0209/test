@@ -8,19 +8,19 @@ public class Player1Agent : Agent
 {
     public int PlayerId = 0;
     public Environment Env;
-    public Transform Target; // 目标位置，用于计算距离等
+    public Transform Target; // 目標位置，用於計算距離等
     private CharacterController controller;
-    public float Speed = 15f; // 移动速度
-    public float JumpHeight = 3f; // 跳跃高度
+    public float Speed = 15f; // 移動速度
+    public float JumpHeight = 3f; // 跳躍高度
     private Vector3 PlayerVelocity; // 玩家速度
     private bool IsGrounded; // 是否在地面上
-    public LayerMask GroundLayer; // 地面层，用于检测是否接触地面
-    public Transform GroundCheck; // 用于检测是否在地面的Transform
-    public float GroundDistance = 0.2f; // 与地面的检测距离
+    public LayerMask GroundLayer; // 地面層，用於檢測是否接觸地面
+    public Transform GroundCheck; // 用於檢測是否在地面的Transform
+    public float GroundDistance = 0.2f; // 與地面的檢測距離
     private float LastDistanceToTarget = float.MaxValue;
-    public float MaxEpisodeTime = 30f; // 设定最大时间（秒）
+    public float MaxEpisodeTime = 30f; // 設定最大時間（秒）
     private float EpisodeTimer;
-    public GameObject Player2; // 需要在编辑器中设置
+    public GameObject Player2; // 需要在編輯器中設定
     private Vector3 startPosition;
     public float TargetCollisionRange = 3.0f;
     public float Player2CollisionRange = 2.5f;
@@ -38,26 +38,26 @@ public class Player1Agent : Agent
     public override void Initialize()
     {
         controller = GetComponent<CharacterController>();
-        startPosition = transform.localPosition; // 将当前局部位置作为初始位置
-        EpisodeTimer = MaxEpisodeTime; // 初始化计时器
+        startPosition = transform.localPosition; // 將當前局部位置作為初始位置
+        EpisodeTimer = MaxEpisodeTime; // 初始化計時器
     }
 
     public override void OnEpisodeBegin()
     {
-        // 重置Agent的位置到初始位置、速度和计时器
+        // 重置Agent的位置到初始位置、速度和計時器
         transform.localPosition = startPosition;
 
 
         // Debug.Log($" Message Player1: \n1.position: {transform.position}\nstart_position: {startPosition}\n2.position: {Player2.transform.position}!!!");
         PlayerVelocity = Vector3.zero;
-        EpisodeTimer = MaxEpisodeTime; // 重置计时器
+        EpisodeTimer = MaxEpisodeTime; // 重置計時器
         LastDistanceToTarget = float.MaxValue;
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        // 收集Agent的观察值
-        // 例如：Agent与目标的距离和方向
+        // 收集Agent的觀察值
+        // 例如：Agent與目標的距離和方向
         sensor.AddObservation(Target.localPosition);
         sensor.AddObservation(this.transform.localPosition);
         sensor.AddObservation(Player2.transform.localPosition);
@@ -69,7 +69,7 @@ public class Player1Agent : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
-        // 执行动作
+        // 執行動作
         var move = Vector3.zero;
         move.x = actions.ContinuousActions[0];
         move.z = actions.ContinuousActions[1];
@@ -99,20 +99,20 @@ public class Player1Agent : Agent
 
         // Target reward
         float DistanceToTarget = Vector3.Distance(this.transform.position, Target.position);
-        if (DistanceToTarget < TargetCollisionRange) // 如果Agent collide 目标
+        if (DistanceToTarget < TargetCollisionRange) // 如果Agent collide 目標
         {
             Debug.Log("Player1 reach target!");
-            EndAndResetEpisode(true, 50); // 结束这个回合
+            EndAndResetEpisode(true, 50); // 結束這個回合
         }else
         {
             // Debug.Log($"Distance to Target: {DistanceToTarget}");
             AddReward(((-DistanceToTarget+TargetCollisionRange) * 0.50f)-5.0f);
         }
 
-        // // 计算与目标的距离
+        // // 計算與目標的距離
         if (DistanceToTarget < LastDistanceToTarget)
         {
-            AddReward(150.0f * (1/DistanceToTarget)); // 如果Agent靠近目标，给予小量正奖励;
+            AddReward(150.0f * (1/DistanceToTarget)); // 如果Agent靠近目標，給予小量正獎勵;
         }else{
             AddReward(((-DistanceToTarget+TargetCollisionRange) * 0.50f)-5.0f);
         }
@@ -125,7 +125,7 @@ public class Player1Agent : Agent
             EndAndResetEpisode(false,20);
         }
 
-        // 更新计时器
+        // 更新計時器
         EpisodeTimer -= Time.deltaTime;
         if (EpisodeTimer <= 0)
         {
@@ -134,16 +134,16 @@ public class Player1Agent : Agent
             AddReward(-Time.deltaTime * 800f); // -800 rewards per second
         }
 
-        // 检查与Player2的碰撞
+        // 檢查與Player2的碰撞
         float distanceToPlayer2 = Vector3.Distance(this.transform.localPosition, Player2.transform.localPosition);
-        if (Env.IsPlayer2Win) // 假定距离阈值为2.5
+        if (Env.IsPlayer2Win) // 假定距離閾值為2.5
         {
             Env.IsPlayer2Win = false;
             Global.AddPlayerSpeed(PlayerId, Global.SpeedBonus);
             Debug.Log($"Player1 Speed(+{Global.SpeedBonus}): {Global.GetPlayerSpeed(PlayerId)}");
             EndAndResetEpisode(false, 40);
         }
-        else if(distanceToPlayer2 >= Player2CollisionRange && distanceToPlayer2 < 10.0f){  // Distance 2.5 ~ 10.0
+        else if(distanceToPlayer2 >= Player2CollisionRange && distanceToPlayer2 < 10.0f){  // 距離 2.5 ~ 10.0
             AddReward(-200.0f * (1/(distanceToPlayer2-Player2CollisionRange/1.5f)));
         }
 
@@ -152,8 +152,8 @@ public class Player1Agent : Agent
 
     private void ResetEnvironment()
     {
-        // 重置Player1的位置和状态
-        // transform.localPosition = startPosition; // 假定你有一个初始位置变量
+        // 重置Player1的位置和狀態
+        // transform.localPosition = startPosition; // 假定你有一個初始位置變數
         float rangeX = 20f;
         float baseX = 0f;
         float rangeZ = 25f;
@@ -203,7 +203,7 @@ public class Player1Agent : Agent
         Speed = Global.GetPlayerSpeed(PlayerId);
         PrintInfo();
         EndEpisode();
-        ResetEnvironment(); // 确保在调用EndEpisode后立即调用
+        ResetEnvironment(); // 確保在調用EndEpisode後立即調用
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)

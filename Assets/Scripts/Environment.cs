@@ -36,33 +36,6 @@ public class Environment : MonoBehaviour
             Debug.Log($"Reset players speed!");
         }
 
-        if (Input.GetButtonDown("Jump1")){
-
-            Debug.Log("Jump1");
-            Transform player2Transform = transform.Find("player2");
-
-            // Check if the player1 node exists
-            if (player2Transform != null)
-            {
-                // Access the script attached to player1 (assuming it's called PlayerScript)
-                Player2Movement player2Script = player2Transform.GetComponent<Player2Movement>();
-
-                // Check if the script exists
-                if (player2Script != null)
-                {
-                    player2Script.controller.enabled = !player2Script.controller.enabled;
-                }
-                else
-                {
-                    Debug.LogWarning("PlayerScript component not found on player2");
-                }
-            }
-            else
-            {
-                Debug.LogWarning("Player2 not found under Environment node");
-            }
-        }
-
     } 
     
 }

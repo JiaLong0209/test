@@ -8,21 +8,20 @@ public class Player2Agent : Agent
 {
     public int PlayerId = 1;
     public Environment Env;
-    public Transform Target; // 目标位置，用于计算距离等
+    public Transform Target; // 目標位置，用於計算距離等
     public CharacterController Controller;
-    public float Speed = 15f; // 移动速度
-    public float JumpHeight = 3f; // 跳跃高度
+    public float Speed = 15f; // 移動速度
+    public float JumpHeight = 3f; // 跳躍高度
     private Vector3 PlayerVelocity; // 玩家速度
     public bool IsGrounded; // 是否在地面上
-    public LayerMask GroundLayer; // 地面层，用于检测是否接触地面
-    public Transform GroundCheck; // 用于检测是否在地面的Transform
-    public float GroundDistance = 0.2f; // 与地面的检测距离
+    public LayerMask GroundLayer; // 地面層，用於檢測是否接觸地面
+    public Transform GroundCheck; // 用於檢測是否在地面的Transform
+    public float GroundDistance = 0.2f; // 與地面的檢測距離
     private float LastDistanceToTarget = float.MaxValue;
-    public float MaxEpisodeTime = 30f; // 设定最大时间（秒）
+    public float MaxEpisodeTime = 30f; // 設定最大時間（秒）
     private float EpisodeTimer;
     private Vector3 StartPosition;
     public float TargetCollisionRange = 3.0f;
-
 
     public void PrintInfo(){
         double winningRate = 0.0f;
@@ -36,14 +35,14 @@ public class Player2Agent : Agent
     public override void Initialize()
     {
         Controller = GetComponent<CharacterController>();
-        StartPosition = transform.localPosition; // 将当前局部位置作为初始位置
-        EpisodeTimer = MaxEpisodeTime; // 初始化计时器
+        StartPosition = transform.localPosition; // 將當前局部位置作為初始位置
+        EpisodeTimer = MaxEpisodeTime; // 初始化計時器
     }
 
     public override void OnEpisodeBegin()
     {
 
-        // 重置Agent的位置到初始位置、速度和计时器
+        // 重置Agent的位置到初始位置、速度和計時器
         transform.localPosition = StartPosition;
 
         float rangeX = 20f;
@@ -66,8 +65,8 @@ public class Player2Agent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        // 收集Agent的观察值
-        // 例如：Agent与目标的距离和方向
+        // 收集Agent的觀察值
+        // 例如：Agent與目標的距離和方向
         sensor.AddObservation(Target.localPosition);
         sensor.AddObservation(this.transform.localPosition);
         sensor.AddObservation(PlayerVelocity);
@@ -78,7 +77,7 @@ public class Player2Agent : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
-        // 执行动作
+        // 執行動作
         var move = Vector3.zero;
         move.x = actions.ContinuousActions[0];
         move.z = actions.ContinuousActions[1];
@@ -101,20 +100,20 @@ public class Player2Agent : Agent
 
         // Target reward
         float DistanceToTarget = Vector3.Distance(this.transform.position, Target.position);
-        if (DistanceToTarget < TargetCollisionRange) // 如果Agent collide 目标
+        if (DistanceToTarget < TargetCollisionRange) // 如果Agent collide 目標
         {
             Debug.Log("Player2 reach Player1!");
-            EndAndResetEpisode(true, 50); // 结束这个回合
+            EndAndResetEpisode(true, 50); // 結束這個回合
         }else
         {
             // Debug.Log($"Distance to Target: {DistanceToTarget}");
             AddReward(((-DistanceToTarget+TargetCollisionRange) * 0.50f)-5.0f);
         }
 
-        // // 计算与目标的距离
+        // // 計算與目標的距離
         if (DistanceToTarget < LastDistanceToTarget)
         {
-            AddReward(150.0f * (1/DistanceToTarget)); // 如果Agent靠近目标，给予小量正奖励;
+            AddReward(150.0f * (1/DistanceToTarget)); // 如果Agent靠近目標，給予小量正獎勵;
         }else{
             AddReward(((-DistanceToTarget+TargetCollisionRange) * 0.50f)-5.0f);
         }
@@ -133,7 +132,7 @@ public class Player2Agent : Agent
             EndAndResetEpisode(false,50);
         }
 
-        // 更新计时器
+        // 更新計時器
         EpisodeTimer -= Time.deltaTime;
         if (EpisodeTimer <= 0)
         {
@@ -167,7 +166,7 @@ public class Player2Agent : Agent
         Speed = Global.GetPlayerSpeed(PlayerId);
         PrintInfo();
         EndEpisode();
-        ResetEnvironment(); // 确保在调用EndEpisode后立即调用
+        ResetEnvironment(); // 確保在調用EndEpisode後立即調用
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
