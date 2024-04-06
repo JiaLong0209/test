@@ -1,16 +1,38 @@
+using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text.Json;
+using History;
 
 public class Environment : MonoBehaviour
 {
     public bool IsPlayer1Win = false;
     public bool IsPlayer2Win = false;
-
+    public bool[] PlayersIsEndEpisode = {false, false};
 
     public void Update()
     {
- 
+
+        bool isAllPlayerEnEpisode = PlayersIsEndEpisode.All(value => value == true);
+
+
+        if(isAllPlayerEnEpisode){
+            Global.UpdateRound();
+            Array.Fill<bool>(PlayersIsEndEpisode, false);
+        }
+
+        InputListener();
+    } 
+
+    public void EndPlayerEpisode(int id, float episodeReward){
+        PlayersIsEndEpisode[id] = true;
+        Global.PlayersEpisodeReward[id] = episodeReward;
+    }
+
+    public void InputListener(){
+
         if (Input.GetKeyDown(KeyCode.R)){
             Global.ResetRound();
             Debug.Log($"Reset round!");
@@ -36,6 +58,6 @@ public class Environment : MonoBehaviour
             Debug.Log($"Reset players speed!");
         }
 
-    } 
+    }
     
 }

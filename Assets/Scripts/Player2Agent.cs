@@ -23,15 +23,6 @@ public class Player2Agent : Agent
     private Vector3 StartPosition;
     public float TargetCollisionRange = 3.0f;
 
-    public void PrintInfo(){
-        double winningRate = 0.0f;
-        if(Global.Round != 0){
-            winningRate = Math.Round(((double)Global.PlayersRoundWin[PlayerId] / Global.Round) * 100, 2);
-        }
-        Debug.Log($"Player2: Current episode reward: {GetCumulativeReward()}\nRound: {Global.Round}  Win: {Global.PlayersRoundWin[PlayerId]}  Win rate: {winningRate}% Win streak: {Global.PlayersWinStreak[PlayerId]}");
-    }
-
-
     public override void Initialize()
     {
         Controller = GetComponent<CharacterController>();
@@ -123,7 +114,7 @@ public class Player2Agent : Agent
         if (Env.IsPlayer1Win){
             Env.IsPlayer1Win = false;
             Global.AddPlayerSpeed(PlayerId, Global.SpeedBonus);
-            Debug.Log($"Player2 Speed(+{Global.SpeedBonus}): {Global.GetPlayerSpeed(PlayerId)}");
+            // Global.PrintPlayerSpeed(PlayerId, Global.SpeedBonus);
             EndAndResetEpisode(false,50);
         }
 
@@ -156,7 +147,7 @@ public class Player2Agent : Agent
             Global.PlayersWinStreak[PlayerId]++;
             Env.IsPlayer2Win = true;
             Global.AddPlayerSpeed(PlayerId, -Global.SpeedBonus);
-            Debug.Log($"Player2 Speed(-{Global.SpeedBonus}): {Global.GetPlayerSpeed(PlayerId)}");
+            // Global.PrintPlayerSpeed(PlayerId, -Global.SpeedBonus);
             AddReward(100.0f * multiplier);
         }else{
             Global.PlayersWinStreak[PlayerId] = 0;
@@ -164,7 +155,9 @@ public class Player2Agent : Agent
             AddReward(-100.0f * multiplier);
         }
         Speed = Global.GetPlayerSpeed(PlayerId);
-        PrintInfo();
+
+        // Global.PrintRoundInfo(PlayerId, GetCumulativeReward());
+        Env.EndPlayerEpisode(PlayerId, GetCumulativeReward());
         EndEpisode();
         ResetEnvironment(); // 確保在調用EndEpisode後立即調用
     }

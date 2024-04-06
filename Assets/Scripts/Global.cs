@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text.Json;
+using History;
 
 public static class Global {
     public static int TotalPlayers = 2;
@@ -20,36 +23,74 @@ public static class Global {
     public static float[] PlayersSpeed = {15.0f, 15.0f};
     public static int[] PlayersRoundWin = {0,0};
     public static int[] PlayersWinStreak = {0,0};
+    public static float[] PlayersWinningRate = {0.0f, 0.0f};
+    public static float[] PlayersEpisodeReward = {0.0f, 0.0f};
+
+    public static HistoryData History = new HistoryData();
+
 
     public static void ResetPlayersSpeed(){
-        for(int i = 0; i < TotalPlayers; i++){
-            PlayersSpeed[i] = BaseSpeed;
-        }
+        Array.Fill<float>(PlayersSpeed, BaseSpeed);
     }
 
     public static  void ResetRound(){
         Round = 0;
-        for(int i = 0; i < TotalPlayers; i++){
-            PlayersWinStreak[i] = 0;
-            PlayersRoundWin[i] = 0;
-        }
+        Array.Fill<int>(PlayersWinStreak, 0);
+        Array.Fill<int>(PlayersRoundWin, 0);
     }
 
     public static float AddSpeed(float speed, float num){
-        return num > 0 ? (speed+num > MaxSpeed ? speed : speed+num) : (speed+num < MinSpeed ? speed : speed+num);
+        return num > 0 ? (speed+num >= MaxSpeed ? speed : speed+num) : (speed+num <= MinSpeed ? speed : speed+num);
     }
 
-    public static float GetPlayerSpeed(int playerId){
-        return PlayersSpeed[playerId];
+    public static float GetPlayerSpeed(int id){
+        return PlayersSpeed[id];
     }
 
-    public static void AddPlayerSpeed(int playerId, float num){
+    public static void AddPlayerSpeed(int id, float num){
         if(num < 0 && !IsActiveDecreaseSpeed) return;
-        if(PlayersSpeed[playerId]+num > MaxSpeed && CanResetPlayersSpeed){
+        if(PlayersSpeed[id]+num > MaxSpeed && CanResetPlayersSpeed){
             ResetPlayersSpeed();
             return;
         }
-        PlayersSpeed[playerId] = AddSpeed(PlayersSpeed[playerId], num);
+        PlayersSpeed[id] = AddSpeed(PlayersSpeed[id], num);
+    }
+
+    public static void UpdateRound(){
+        Round += 1;
+        for(int id = 0; id < TotalPlayers; id++){
+            UpdatePlayerWinningRate(id);
+        }
+        UpdateHistory();
+        PrintInfo();
+    }
+
+    public static void UpdateHistory(){
+        // for(int id = 0; id < TotalPlayers; id++){
+        //     History.UpdateData(id);
+        // }
+    }
+
+    public static void UpdatePlayerWinningRate(int id){
+        if(Round != 0){
+            PlayersWinningRate[id] = (float)Math.Round(((float)PlayersRoundWin[id] / Round) * 100, 2);
+        }
+    }
+
+    public static void PrintInfo(){
+        string log = $"-- Round {Round} --";
+        for(int id = 0; id < TotalPlayers; id++){
+            log += $"Player{id+1}: Episode reward: {PlayersEpisodeReward[id]} |  Win: {PlayersRoundWin[id]} | Win rate: {PlayersWinningRate[id]}% | Win streak: {PlayersWinStreak[id]} | Speed: {GetPlayerSpeed(id)}\n";
+        }
+        Debug.Log(log);
+    }
+
+    public static void PrintRoundInfo(int id, float cumulativeReward){
+        Debug.Log($"Player{id+1}: Current episode reward: {cumulativeReward}\nRound: {Round}  Win: {PlayersRoundWin[id]}  Win rate: {PlayersWinningRate[id]}% Win streak: {PlayersWinStreak[id]}");
+    }
+
+    public static void PrintPlayerSpeed(int id, float speedBonus) {
+        Debug.Log($"Player{id + 1} Speed({(speedBonus >= 0 ? "+" : "")}{speedBonus}): {GetPlayerSpeed(id)}");
     }
 
 }

@@ -26,15 +26,6 @@ public class Player1Agent : Agent
     public float Player2CollisionRange = 2.5f;
     public bool activeRandomPlayerPosition = false;
 
-    public void PrintInfo(){
-        double winningRate = 0.0f;
-        if(Global.Round != 0){
-            winningRate = Math.Round(((double)Global.PlayersRoundWin[PlayerId] / Global.Round) * 100, 2);
-        }
-        Debug.Log($"Current episode reward: {GetCumulativeReward()}\nRound: {Global.Round}  Win: {Global.PlayersRoundWin[PlayerId]}  Win rate: {winningRate}% Win streak: {Global.PlayersWinStreak[PlayerId]}");
-    }
-
-
     public override void Initialize()
     {
         controller = GetComponent<CharacterController>();
@@ -46,7 +37,6 @@ public class Player1Agent : Agent
     {
         // 重置Agent的位置到初始位置、速度和計時器
         transform.localPosition = startPosition;
-
 
         // Debug.Log($" Message Player1: \n1.position: {transform.position}\nstart_position: {startPosition}\n2.position: {Player2.transform.position}!!!");
         PlayerVelocity = Vector3.zero;
@@ -74,13 +64,6 @@ public class Player1Agent : Agent
         move.x = actions.ContinuousActions[0];
         move.z = actions.ContinuousActions[1];
 
-        // foreach (var a in actions.ContinuousActions)
-        // {
-        //     Debug.Log($"{a}");
-        // }
-        // Debug.Log($"--------------------------------------");
-
-
         IsGrounded = Physics.CheckSphere(GroundCheck.position, GroundDistance, GroundLayer, QueryTriggerInteraction.Ignore);
         if (IsGrounded && PlayerVelocity.y < 0)
         {
@@ -93,7 +76,7 @@ public class Player1Agent : Agent
         {
             PlayerVelocity.y += Mathf.Sqrt(JumpHeight * -3.0f * Physics.gravity.y);
         }
-
+        
         PlayerVelocity.y += Physics.gravity.y * Time.deltaTime;
         controller.Move(PlayerVelocity * Time.deltaTime);
 
@@ -140,14 +123,13 @@ public class Player1Agent : Agent
         {
             Env.IsPlayer2Win = false;
             Global.AddPlayerSpeed(PlayerId, Global.SpeedBonus);
-            Debug.Log($"Player1 Speed(+{Global.SpeedBonus}): {Global.GetPlayerSpeed(PlayerId)}");
+            // Global.PrintPlayerSpeed(PlayerId, Global.SpeedBonus);
             EndAndResetEpisode(false, 40);
         }
         else if(distanceToPlayer2 >= Player2CollisionRange && distanceToPlayer2 < 10.0f){  // 距離 2.5 ~ 10.0
             AddReward(-200.0f * (1/(distanceToPlayer2-Player2CollisionRange/1.5f)));
         }
 
-        // PrintInfo();
     }
 
     private void ResetEnvironment()
@@ -192,16 +174,16 @@ public class Player1Agent : Agent
             Global.PlayersWinStreak[PlayerId]++;
             Env.IsPlayer1Win = true;
             Global.AddPlayerSpeed(PlayerId, -Global.SpeedBonus);
-            Debug.Log($"Player1 Speed(-{Global.SpeedBonus}): {Global.GetPlayerSpeed(PlayerId)}");
+            // Global.PrintPlayerSpeed(PlayerId, -Global.SpeedBonus);
             AddReward(100.0f * multiplier);
         }else{
             Global.PlayersWinStreak[PlayerId] = 0;
             Env.IsPlayer1Win = false;
             AddReward(-100.0f * multiplier);
         }
-        Global.Round++;
         Speed = Global.GetPlayerSpeed(PlayerId);
-        PrintInfo();
+        // Global.PrintRoundInfo(PlayerId, GetCumulativeReward());
+        Env.EndPlayerEpisode(PlayerId, GetCumulativeReward());
         EndEpisode();
         ResetEnvironment(); // 確保在調用EndEpisode後立即調用
     }

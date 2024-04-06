@@ -390,6 +390,7 @@
 -analyzer:"/home/jialong/Unity/Hub/Editor/2022.3.19f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 "Assets/Scripts/Environment.cs"
 "Assets/Scripts/Global.cs"
+"Assets/Scripts/HistoryData.cs"
 "Assets/Scripts/Player1Agent.cs"
 "Assets/Scripts/Player1Movement.cs"
 "Assets/Scripts/Player2Agent.cs"
