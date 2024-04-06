@@ -57,6 +57,9 @@ public class Environment : MonoBehaviour
             Global.ResetPlayersSpeed();
             Debug.Log($"Reset players speed!");
         }
+        if (Input.GetKeyDown(KeyCode.P)){
+            Global.History.PrintData();
+        }
 
     }
     

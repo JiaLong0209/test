@@ -21,7 +21,7 @@ public class Player2Agent : Agent
     public float MaxEpisodeTime = 30f; // 設定最大時間（秒）
     private float EpisodeTimer;
     private Vector3 StartPosition;
-    public float TargetCollisionRange = 3.0f;
+    public float TargetCollisionRange = 1.5f;
 
     public override void Initialize()
     {

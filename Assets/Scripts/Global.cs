@@ -66,9 +66,11 @@ public static class Global {
     }
 
     public static void UpdateHistory(){
-        // for(int id = 0; id < TotalPlayers; id++){
-        //     History.UpdateData(id);
-        // }
+        History.UpdateData(round: Round,
+                           roundWin: (int[])PlayersRoundWin.Clone(),
+                           winStreak: (int[])PlayersWinStreak.Clone(),
+                           winningRate: (float[])PlayersWinningRate.Clone(),
+                           episodeReward: (float[])PlayersEpisodeReward.Clone() );
     }
 
     public static void UpdatePlayerWinningRate(int id){
@@ -78,11 +80,15 @@ public static class Global {
     }
 
     public static void PrintInfo(){
-        string log = $"-- Round {Round} --";
+        string str = $"-- Round {Round} --";
         for(int id = 0; id < TotalPlayers; id++){
-            log += $"Player{id+1}: Episode reward: {PlayersEpisodeReward[id]} |  Win: {PlayersRoundWin[id]} | Win rate: {PlayersWinningRate[id]}% | Win streak: {PlayersWinStreak[id]} | Speed: {GetPlayerSpeed(id)}\n";
+            str += $"Player{id+1}: Episode reward: {PlayersEpisodeReward[id]} |  Win: {PlayersRoundWin[id]} | Win rate: {PlayersWinningRate[id]}% | Win streak: {PlayersWinStreak[id]} | Speed: {GetPlayerSpeed(id)}\n";
         }
-        Debug.Log(log);
+        Debug.Log(str);
+
+        if(Round % 10 == 0){
+            Global.History.PrintData();
+        }
     }
 
     public static void PrintRoundInfo(int id, float cumulativeReward){

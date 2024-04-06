@@ -22,8 +22,8 @@ public class Player1Agent : Agent
     private float EpisodeTimer;
     public GameObject Player2; // 需要在編輯器中設定
     private Vector3 startPosition;
-    public float TargetCollisionRange = 3.0f;
-    public float Player2CollisionRange = 2.5f;
+    public float TargetCollisionRange = 2f;
+    public float Player2CollisionRange = 1.5f;
     public bool activeRandomPlayerPosition = false;
 
     public override void Initialize()

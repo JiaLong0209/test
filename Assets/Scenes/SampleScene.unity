@@ -1111,6 +1111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPlayer1Win: 0
   IsPlayer2Win: 0
+  PlayersIsEndEpisode: 0000
 --- !u!43 &148859064
 Mesh:
   m_ObjectHideFlags: 0
@@ -4944,6 +4945,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPlayer1Win: 0
   IsPlayer2Win: 0
+  PlayersIsEndEpisode: 0000
 --- !u!1 &612568799
 GameObject:
   m_ObjectHideFlags: 0
@@ -6427,6 +6429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPlayer1Win: 0
   IsPlayer2Win: 0
+  PlayersIsEndEpisode: 0000
 --- !u!1 &826151260
 GameObject:
   m_ObjectHideFlags: 0
@@ -8016,6 +8019,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPlayer1Win: 0
   IsPlayer2Win: 0
+  PlayersIsEndEpisode: 0000
 --- !u!1 &1131098456
 GameObject:
   m_ObjectHideFlags: 0
@@ -13732,6 +13736,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPlayer1Win: 0
   IsPlayer2Win: 0
+  PlayersIsEndEpisode: 0000
 --- !u!1 &1655664992
 GameObject:
   m_ObjectHideFlags: 0
@@ -14175,6 +14180,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPlayer1Win: 0
   IsPlayer2Win: 0
+  PlayersIsEndEpisode: 0000
 --- !u!1 &1695026429
 GameObject:
   m_ObjectHideFlags: 0
@@ -15670,6 +15676,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPlayer1Win: 0
   IsPlayer2Win: 0
+  PlayersIsEndEpisode: 0000
 --- !u!1 &1833658793
 GameObject:
   m_ObjectHideFlags: 0
@@ -15997,6 +16004,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPlayer1Win: 0
   IsPlayer2Win: 0
+  PlayersIsEndEpisode: 0000
 --- !u!1 &1893954221
 GameObject:
   m_ObjectHideFlags: 0

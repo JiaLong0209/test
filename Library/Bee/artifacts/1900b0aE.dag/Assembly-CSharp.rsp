@@ -395,6 +395,7 @@
 "Assets/Scripts/Player1Movement.cs"
 "Assets/Scripts/Player2Agent.cs"
 "Assets/Scripts/Player2Movement.cs"
+"Assets/Scripts/RandomObjectSpawner.cs"
 "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark01.cs"
 "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark01_UGUI.cs"
 "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark02.cs"
