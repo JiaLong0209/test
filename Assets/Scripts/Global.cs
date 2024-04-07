@@ -26,6 +26,8 @@ public static class Global {
     public static float[] PlayersWinningRate = {0.0f, 0.0f};
     public static float[] PlayersEpisodeReward = {0.0f, 0.0f};
 
+    public static Vector3 StageSize = new Vector3(50, 3, 70);
+
     public static HistoryData History = new HistoryData();
 
 
@@ -86,9 +88,10 @@ public static class Global {
         }
         Debug.Log(str);
 
-        if(Round % 10 == 0){
-            Global.History.PrintData();
+        if(Round % 10000 == 0){
+            Global.History.SaveToJson();
         }
+
     }
 
     public static void PrintRoundInfo(int id, float cumulativeReward){

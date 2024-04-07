@@ -11,6 +11,13 @@ public class Environment : MonoBehaviour
     public bool IsPlayer1Win = false;
     public bool IsPlayer2Win = false;
     public bool[] PlayersIsEndEpisode = {false, false};
+    public RandomObjectSpawner CylinderSpawner;
+
+    public void Start(){
+        CylinderSpawner = GetComponent<RandomObjectSpawner>();
+        CylinderSpawner.UpdateAndSpawnObjects();
+    }
+
 
     public void Update()
     {
@@ -20,6 +27,7 @@ public class Environment : MonoBehaviour
 
         if(isAllPlayerEnEpisode){
             Global.UpdateRound();
+            CylinderSpawner.UpdateAndSpawnObjects();
             Array.Fill<bool>(PlayersIsEndEpisode, false);
         }
 
@@ -37,11 +45,11 @@ public class Environment : MonoBehaviour
             Global.ResetRound();
             Debug.Log($"Reset round!");
         }
-        if (Input.GetKeyDown(KeyCode.Z)){
+        if (Input.GetKeyDown(KeyCode.Alpha0)){
             Global.Mode = 0;
             Debug.Log($"Change game mode: {Global.Mode}");
         }
-        if (Input.GetKeyDown(KeyCode.X)){
+        if (Input.GetKeyDown(KeyCode.Alpha1)){
             Global.Mode = 1;
             Debug.Log($"Change game mode: {Global.Mode}");
         }
@@ -49,7 +57,7 @@ public class Environment : MonoBehaviour
             Global.BaseSpeed += -1;
             Debug.Log($"Decrease base speed: {Global.BaseSpeed}");
         }
-        if (Input.GetKeyDown(KeyCode.S)){
+        if (Input.GetKeyDown(KeyCode.D)){
             Global.BaseSpeed += 1;
             Debug.Log($"Increase base speed: {Global.BaseSpeed}");
         }
@@ -58,7 +66,10 @@ public class Environment : MonoBehaviour
             Debug.Log($"Reset players speed!");
         }
         if (Input.GetKeyDown(KeyCode.P)){
-            Global.History.PrintData();
+            Global.History.PrintJson();
+        }
+        if (Input.GetKeyDown(KeyCode.S)){
+            Global.History.SaveToJson();
         }
 
     }

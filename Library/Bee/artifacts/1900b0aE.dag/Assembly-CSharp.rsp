@@ -391,6 +391,7 @@
 "Assets/Scripts/Environment.cs"
 "Assets/Scripts/Global.cs"
 "Assets/Scripts/HistoryData.cs"
+"Assets/Scripts/JsonManager.cs"
 "Assets/Scripts/Player1Agent.cs"
 "Assets/Scripts/Player1Movement.cs"
 "Assets/Scripts/Player2Agent.cs"

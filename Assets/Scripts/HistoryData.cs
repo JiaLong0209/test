@@ -1,71 +1,89 @@
-using System;
-using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
+using UnityEngine;
 
 namespace History
 {
-	public class HistoryData{
- 		public List<int> Round;
- 		public List<int[]> PlayersRoundWin;
- 		public List<int[]> PlayersWinStreak;
- 		public List<float[]> PlayersWinningRate;
- 		public List<float[]> PlayersEpisodeReward;
+    [System.Serializable]
+    public class HistoryData
+    {
+        public List<int> Round;
+        public List<SerializedArray<int>> PlayersRoundWin;
+        public List<SerializedArray<int>> PlayersWinStreak;
+        public List<SerializedArray<float>> PlayersWinningRate;
+        public List<SerializedArray<float>> PlayersEpisodeReward;
 
-		public HistoryData(){
-			Round = new List<int>();
-			PlayersRoundWin = new List<int[]>();
-			PlayersWinStreak = new List<int[]>();
-			PlayersWinningRate = new List<float[]>();
-			PlayersEpisodeReward = new List<float[]>();
-		}
+        public HistoryData()
+        {
+            Round = new List<int>();
+            PlayersRoundWin = new List<SerializedArray<int>>();
+            PlayersWinStreak = new List<SerializedArray<int>>();
+            PlayersWinningRate = new List<SerializedArray<float>>();
+            PlayersEpisodeReward = new List<SerializedArray<float>>();
+        }
 
-
-		public void UpdateData(int round, int[] roundWin, int[] winStreak, float[] winningRate,  float[] episodeReward){
-			Round.Add(round);
-			PlayersRoundWin.Add(roundWin);
-			PlayersWinStreak.Add(winStreak);
-			PlayersWinningRate.Add(winningRate);
-			PlayersEpisodeReward.Add(episodeReward);
-
-
-		}
+        public void UpdateData(int round, int[] roundWin, int[] winStreak, float[] winningRate, float[] episodeReward)
+        {
+            Round.Add(round);
+            PlayersRoundWin.Add(new SerializedArray<int>(roundWin));
+            PlayersWinStreak.Add(new SerializedArray<int>(winStreak));
+            PlayersWinningRate.Add(new SerializedArray<float>(winningRate));
+            PlayersEpisodeReward.Add(new SerializedArray<float>(episodeReward));
+        }
 
         public void PrintData()
         {
-
-            for (int i = 0; i < Round.Count(); i++)
+            for (int i = 0; i < Round.Count; i++)
             {
                 Debug.Log($"Round: {Round[i]}");
                 Debug.Log("Player Round Win:");
-                PrintArray(PlayersRoundWin[i]);
+                PrintArray(PlayersRoundWin[i].array);
                 Debug.Log("Player Win Streak:");
-                PrintArray(PlayersWinStreak[i]);
+                PrintArray(PlayersWinStreak[i].array);
                 Debug.Log("Player Winning Rate:");
-                PrintArray(PlayersWinningRate[i]);
+                PrintArray(PlayersWinningRate[i].array);
                 Debug.Log("Player Episode Reward:");
-                PrintArray(PlayersEpisodeReward[i]);
+                PrintArray(PlayersEpisodeReward[i].array);
             }
+        }
 
+        public void PrintJson()
+        {
+            Debug.Log(GetJsonData());
+        }
 
+        public void SaveToJson(){
+            JsonManager jsonManager = new JsonManager(); // Instantiate JsonManager
+            jsonManager.SaveToJson(this);
+        }
+
+        public string GetJsonData()
+        {
+            return JsonUtility.ToJson(this);
         }
 
         private void PrintArray<T>(T[] array)
         {
-        	string str = "";
+            string str = "";
             foreach (var item in array)
             {
-            	str += $"{item} ";
+                str += $"{item} ";
             }
             Debug.Log(str);
         }
     }
 
+    [System.Serializable]
+    public class SerializedArray<T>
+    {
+        public T[] array;
+    	public T player1;
+    	public T player2;
+
+        public SerializedArray(T[] array)
+        {
+        	this.array = array;
+            this.player1 = array[0];
+            this.player2 = array[1];
+        }
+    }
 }
-
-
-
-
-
-
-

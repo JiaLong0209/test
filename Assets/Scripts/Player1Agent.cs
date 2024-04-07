@@ -35,6 +35,7 @@ public class Player1Agent : Agent
 
     public override void OnEpisodeBegin()
     {
+
         // 重置Agent的位置到初始位置、速度和計時器
         transform.localPosition = startPosition;
 
